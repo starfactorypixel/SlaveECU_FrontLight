@@ -1,0 +1,22 @@
+После выпиливания части неиспользуемых переменных (build_flags = -O2 -D DEBUG):
+    RAM:   [======    ]  57.3% (used 11728 bytes from 20480 bytes)
+    Flash: [======    ]  60.6% (used 39700 bytes from 65536 bytes)
+
+После оптимизации имён функций:
+    RAM:   [======    ]  57.3% (used 11740 bytes from 20480 bytes)
+    Flash: [======    ]  60.6% (used 39700 bytes from 65536 bytes)
+
+После перевода CANManager на фиксированный размер очередей CANFrames и фиксированное число CANObjects:
+    RAM:   [======    ]  64.9% (used 13284 bytes from 20480 bytes)
+    Flash: [=====     ]  52.6% (used 34448 bytes from 65536 bytes)
+
+После перевода DataFields в CANObject на статику (и удаления функционала Send Raw Data):
+    RAM:   [========= ]  89.2% (used 18276 bytes from 20480 bytes)
+    Flash: [=====     ]  53.2% (used 34848 bytes from 65536 bytes)
+Если убрать флаг -D DEBUG (многие строки логгера будут выпилены):
+    RAM:   [========= ]  89.2% (used 18276 bytes from 20480 bytes)
+    Flash: [=====     ]  52.3% (used 34272 bytes from 65536 bytes)
+
+С PixelCANLibrary v.0.1.0
+    RAM:   [======    ]  56.9% (used 11648 bytes from 20480 bytes)
+    Flash: [=====     ]  51.4% (used 33692 bytes from 65536 bytes)
