@@ -18,6 +18,11 @@ namespace CANLib
 	/// @brief The size of CANManager's internal CAN frame buffer
 	static constexpr uint8_t CFG_CANFrameBufferSize = 16;
 
+
+	static constexpr uint16_t CFG_TurnTimeOn = 550;
+	static constexpr uint16_t CFG_TurnTimeOf = 400;
+
+
 	//*********************************************************************
 	// CAN Manager & CAN Object configuration
 	//*********************************************************************
@@ -207,7 +212,7 @@ namespace CANLib
 		else
 		{
 			Matrix::matrixObj.ShowLayer(5);
-			Outputs::outObj.SetOn(5, 750, 750);
+			Outputs::outObj.SetOn(5, CFG_TurnTimeOn, CFG_TurnTimeOf);
 		}
 
 		can_frame.initialized = true;
@@ -232,7 +237,7 @@ namespace CANLib
 		else
 		{
 			Matrix::matrixObj.ShowLayer(6);
-			Outputs::outObj.SetOn(6, 750, 750);
+			Outputs::outObj.SetOn(6, CFG_TurnTimeOn, CFG_TurnTimeOf);
 		}
 
 		can_frame.initialized = true;
@@ -258,8 +263,8 @@ namespace CANLib
 		else
 		{
 			Matrix::matrixObj.ShowLayer(7);
-			Outputs::outObj.SetOn(5, 750, 750);
-			Outputs::outObj.SetOn(6, 750, 750);
+			Outputs::outObj.SetOn(5, CFG_TurnTimeOn, CFG_TurnTimeOf);
+			Outputs::outObj.SetOn(6, CFG_TurnTimeOn, CFG_TurnTimeOf);
 		}
 
 		can_frame.initialized = true;
