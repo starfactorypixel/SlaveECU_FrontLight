@@ -32,5 +32,5 @@ jobs:
       - name: Create release bin file
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ github.event.repository.name }}_debug.bin
+          name: ${{ github.event.repository.name }}_release.bin
           path: .pio/build/Release/firmware.bin
