@@ -22,3 +22,15 @@ jobs:
 
       - name: Build PlatformIO Project
         run: pio run
+
+      - name: Create debug bin file
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ github.event.repository.name }}_debug.bin
+          path: .pio/build/Debug/firmware.bin
+
+      - name: Create release bin file
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ github.event.repository.name }}_debug.bin
+          path: .pio/build/Release/firmware.bin
