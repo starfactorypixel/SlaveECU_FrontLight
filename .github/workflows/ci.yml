@@ -19,6 +19,16 @@ jobs:
           python-version: '3.9'
       - name: Install PlatformIO Core
         run: pip install --upgrade platformio
-
+      
       - name: Build PlatformIO Project
         run: pio run
+      
+      - name: Create artifact files
+        run: |
+          mkdir -p .pio/build/artifact
+          mv .pio/build/Debug/firmware.bin .pio/build/artifact/${{ github.event.repository.name }}_debug.bin
+          mv .pio/build/Release/firmware.bin .pio/build/artifact/${{ github.event.repository.name }}_release.bin
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ${{ github.event.repository.name }}
+          path: .pio/build/artifact
