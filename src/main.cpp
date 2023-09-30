@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include "sd.h"
+#include <ConstantLibrary.h>
 #include <LoggerLibrary.h>
 #include <About.h>
 #include <Leds.h>
