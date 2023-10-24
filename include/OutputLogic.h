@@ -20,13 +20,12 @@ namespace Outputs
 	
 	inline void Setup()
 	{
-		#warning Move init to lib!
-		outObj.AddPort( {GPIOB, GPIO_PIN_11, ADC_CHANNEL_6, 10000} );
-		outObj.AddPort( {GPIOB, GPIO_PIN_10, ADC_CHANNEL_5, 5000} );
-		outObj.AddPort( {GPIOB, GPIO_PIN_2, ADC_CHANNEL_4, 10000} );
-		outObj.AddPort( {GPIOB, GPIO_PIN_1, ADC_CHANNEL_3, 10000} );
-		outObj.AddPort( {GPIOB, GPIO_PIN_0, ADC_CHANNEL_2, 5000} );
-		outObj.AddPort( {GPIOA, GPIO_PIN_7, ADC_CHANNEL_1, 5000} );
+		outObj.AddPort( {GPIOB, GPIO_PIN_11}, {GPIOA, ADC_CHANNEL_6}, 10000 );
+		outObj.AddPort( {GPIOB, GPIO_PIN_10}, {GPIOA, ADC_CHANNEL_5}, 5000 );
+		outObj.AddPort( {GPIOB, GPIO_PIN_2}, {GPIOA, ADC_CHANNEL_4}, 10000 );
+		outObj.AddPort( {GPIOB, GPIO_PIN_1}, {GPIOA, ADC_CHANNEL_3}, 10000 );
+		outObj.AddPort( {GPIOB, GPIO_PIN_0}, {GPIOA, ADC_CHANNEL_2}, 5000 );
+		outObj.AddPort( {GPIOA, GPIO_PIN_7}, {GPIOA, ADC_CHANNEL_1}, 5000 );
 		outObj.Init();
 
 		//outObj.On(4);

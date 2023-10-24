@@ -37,7 +37,7 @@
 /  common sector buffer in the file system object (FATFS) is used for the file
 /  data transfer. */
 
-#define _FS_READONLY         0      /* 0:Read/Write or 1:Read only */
+#define _FS_READONLY         1      /* 0:Read/Write or 1:Read only */
 /* This option switches read-only configuration. (0:Read/Write or 1:Read-only)
 /  Read-only configuration removes writing API functions, f_write(), f_sync(),
 /  f_unlink(), f_mkdir(), f_chmod(), f_rename(), f_truncate(), f_getfree()
@@ -52,7 +52,7 @@
 /   2: f_opendir(), f_readdir() and f_closedir() are removed in addition to 1.
 /   3: f_lseek() function is removed in addition to 2. */
 
-#define _USE_STRFUNC         2      /* 0:Disable or 1-2:Enable */
+#define _USE_STRFUNC         0      /* 0:Disable or 1-2:Enable */
 /* This option switches string functions, f_gets(), f_putc(), f_puts() and
 /  f_printf().
 /
@@ -113,7 +113,7 @@
 /   874  - Thai (OEM, Windows)
 /   1    - ASCII (No extended character. Valid for only non-LFN configuration.) */
 
-#define _USE_LFN     1    /* 0 to 3 */
+#define _USE_LFN     0    /* 0 to 3 */
 #define _MAX_LFN     255    /* Maximum LFN length to handle (12 to 255) */
 /* The _USE_LFN option switches the LFN feature.
 /
