@@ -10,8 +10,6 @@
 #define CS_SD_PIN GPIO_PIN_8
 #define SS_SD_SELECT() HAL_GPIO_WritePin(CS_SD_GPIO_PORT, CS_SD_PIN, GPIO_PIN_RESET)
 #define SS_SD_DESELECT() HAL_GPIO_WritePin(CS_SD_GPIO_PORT, CS_SD_PIN, GPIO_PIN_SET)
-#define LD_ON HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET); //RED
-#define LD_OFF HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET); //RED
 //--------------------------------------------------
 /* Card type flags (CardType) */
 #define CT_MMC 0x01 /* MMC ver 3 */
@@ -21,7 +19,7 @@
 #define CT_BLOCK 0x08 /* Block addressing */
 //--------------------------------------------------
 typedef struct sd_info {
-  volatile uint8_t type;//тип карты
+  volatile uint8_t type;//пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 } sd_info_ptr;
 //--------------------------------------------------
 void SD_PowerOn(void);

@@ -22,7 +22,7 @@ char str1[60]={0};
 //--------------------------------------------------
 static void Error (void)
 {
-  LD_ON;
+
 }
 //-----------------------------------------------
 uint8_t SPIx_WriteRead(uint8_t Byte)
@@ -150,7 +150,7 @@ uint8_t sd_ini(void)
 	uint8_t i, cmd;
   int16_t tmr;
   uint32_t temp;
-  LD_OFF;
+  
   sdinfo.type = 0;
 	uint8_t ocr[4];
 	temp = hspi2.Init.BaudRatePrescaler;
