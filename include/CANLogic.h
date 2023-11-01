@@ -115,18 +115,14 @@ namespace CANLib
 	// Управление пользовательскими изображениями ( для WS2812b ).
 	CANObject<uint8_t, 1> obj_custom_image(0x00CB, CAN_TIMER_DISABLED, 300);
 
-	// 0x00CC	ImageTransfer
-	// send raw
-	// Link 1 + X	{ type[0] data[1..7] }
-	// Для передачи изображений
-	// TODO: this function has been put on hold.
+	inline uint8_t on_off_validator(uint8_t value)
+	{
+		return (value > 0) ? 0xFF : 0;
+	}
 
 	// вызывается, если по CAN пришла команда включения/выключения габаритов
 	can_result_t side_beam_set_handler(can_frame_t &can_frame, can_error_t &error)
 	{
-		// light_ecu_can_data.side_beam.brightness = can_frame.data[0];
-
-		// if (light_ecu_can_data.side_beam.brightness == 0)
 		if (can_frame.data[0] == 0)
 		{
 			Matrix::matrixObj.HideLayer(2);
@@ -137,23 +133,14 @@ namespace CANLib
 			Matrix::matrixObj.ShowLayer(2);
 			Outputs::outObj.SetOn(2);
 		}
+		obj_side_beam.SetValue(0, on_off_validator(can_frame.data[0]), CAN_TIMER_TYPE_NONE, CAN_EVENT_TYPE_NORMAL);
 
-		can_frame.initialized = true;
-		can_frame.function_id = CAN_FUNC_EVENT_OK;
-		// can_frame.data[0] doesn't change
-		// TODO: может читать установленное значение с порта и его присваивать в can_frame.data[0]?
-		// читать вот этой функцией: HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_9)
-		can_frame.raw_data_length = 2;
-
-		return CAN_RESULT_CAN_FRAME;
+		return CAN_RESULT_IGNORE;
 	}
 
 	// вызывается, если по CAN пришла команда включения/выключения ближнего света
 	can_result_t low_beam_set_handler(can_frame_t &can_frame, can_error_t &error)
 	{
-		// light_ecu_can_data.brake_light.brightness = can_frame.data[0];
-
-		// if (light_ecu_can_data.brake_light.brightness == 0)
 		if (can_frame.data[0] == 0)
 		{
 			Matrix::matrixObj.HideLayer(4);
@@ -164,21 +151,14 @@ namespace CANLib
 			Matrix::matrixObj.ShowLayer(4);
 			Outputs::outObj.SetOn(4);
 		}
+		obj_low_beam.SetValue(0, on_off_validator(can_frame.data[0]), CAN_TIMER_TYPE_NONE, CAN_EVENT_TYPE_NORMAL);
 
-		can_frame.initialized = true;
-		can_frame.function_id = CAN_FUNC_EVENT_OK;
-		// can_frame.data[0] doesn't change
-		can_frame.raw_data_length = 2;
-
-		return CAN_RESULT_CAN_FRAME;
+		return CAN_RESULT_IGNORE;
 	}
 
 	// вызывается, если по CAN пришла команда включения/выключения дальнего света
 	can_result_t high_beam_set_handler(can_frame_t &can_frame, can_error_t &error)
 	{
-		// light_ecu_can_data.reverse_light.brightness = can_frame.data[0];
-
-		// if (light_ecu_can_data.reverse_light.brightness == 0)
 		if (can_frame.data[0] == 0)
 		{
 			Matrix::matrixObj.HideLayer(3);
@@ -189,21 +169,14 @@ namespace CANLib
 			Matrix::matrixObj.ShowLayer(3);
 			Outputs::outObj.SetOn(3);
 		}
+		obj_high_beam.SetValue(0, on_off_validator(can_frame.data[0]), CAN_TIMER_TYPE_NONE, CAN_EVENT_TYPE_NORMAL);
 
-		can_frame.initialized = true;
-		can_frame.function_id = CAN_FUNC_EVENT_OK;
-		// can_frame.data[0] doesn't change
-		can_frame.raw_data_length = 2;
-
-		return CAN_RESULT_CAN_FRAME;
+		return CAN_RESULT_IGNORE;
 	}
 
 	// вызывается, если по CAN пришла команда включения/выключения левого поворотника
 	can_result_t turn_left_set_handler(can_frame_t &can_frame, can_error_t &error)
 	{
-		// light_ecu_can_data.left_indicator.brightness = can_frame.data[0];
-
-		// if (light_ecu_can_data.left_indicator.brightness == 0)
 		if (can_frame.data[0] == 0)
 		{
 			Matrix::matrixObj.HideLayer(5);
@@ -214,21 +187,14 @@ namespace CANLib
 			Matrix::matrixObj.ShowLayer(5);
 			Outputs::outObj.SetOn(5, CFG_TurnTimeOn, CFG_TurnTimeOf);
 		}
+		obj_left_indicator.SetValue(0, on_off_validator(can_frame.data[0]), CAN_TIMER_TYPE_NONE, CAN_EVENT_TYPE_NORMAL);
 
-		can_frame.initialized = true;
-		can_frame.function_id = CAN_FUNC_EVENT_OK;
-		// can_frame.data[0] doesn't change
-		can_frame.raw_data_length = 2;
-
-		return CAN_RESULT_CAN_FRAME;
+		return CAN_RESULT_IGNORE;
 	}
 
 	// вызывается, если по CAN пришла команда включения/выключения правого поворотника
 	can_result_t turn_right_set_handler(can_frame_t &can_frame, can_error_t &error)
 	{
-		// light_ecu_can_data.right_indicator.brightness = can_frame.data[0];
-
-		// if (light_ecu_can_data.right_indicator.brightness == 0)
 		if (can_frame.data[0] == 0)
 		{
 			Matrix::matrixObj.HideLayer(6);
@@ -239,21 +205,14 @@ namespace CANLib
 			Matrix::matrixObj.ShowLayer(6);
 			Outputs::outObj.SetOn(6, CFG_TurnTimeOn, CFG_TurnTimeOf);
 		}
+		obj_right_indicator.SetValue(0, on_off_validator(can_frame.data[0]), CAN_TIMER_TYPE_NONE, CAN_EVENT_TYPE_NORMAL);
 
-		can_frame.initialized = true;
-		can_frame.function_id = CAN_FUNC_EVENT_OK;
-		// can_frame.data[0] doesn't change
-		can_frame.raw_data_length = 2;
-
-		return CAN_RESULT_CAN_FRAME;
+		return CAN_RESULT_IGNORE;
 	}
 
 	// вызывается, если по CAN пришла команда включения/выключения аварийного сигнала
 	can_result_t hazard_beam_set_handler(can_frame_t &can_frame, can_error_t &error)
 	{
-		// light_ecu_can_data.hazard_beam.brightness = can_frame.data[0];
-
-		// if (light_ecu_can_data.hazard_beam.brightness == 0)
 		if (can_frame.data[0] == 0)
 		{
 			Matrix::matrixObj.HideLayer(7);
@@ -266,21 +225,14 @@ namespace CANLib
 			Outputs::outObj.SetOn(5, CFG_TurnTimeOn, CFG_TurnTimeOf);
 			Outputs::outObj.SetOn(6, CFG_TurnTimeOn, CFG_TurnTimeOf);
 		}
+		obj_hazard_beam.SetValue(0, on_off_validator(can_frame.data[0]), CAN_TIMER_TYPE_NONE, CAN_EVENT_TYPE_NORMAL);
 
-		can_frame.initialized = true;
-		can_frame.function_id = CAN_FUNC_EVENT_OK;
-		// can_frame.data[0] doesn't change
-		can_frame.raw_data_length = 2;
-
-		return CAN_RESULT_CAN_FRAME;
+		return CAN_RESULT_IGNORE;
 	}
 
 	// вызывается, если по CAN пришла команда включения/выключения пользовательского света
 	can_result_t custom_beam_set_handler(can_frame_t &can_frame, can_error_t &error)
 	{
-		// light_ecu_can_data.custom_beam.brightness = can_frame.data[0];
-
-		// if (light_ecu_can_data.custom_beam.brightness == 0)
 		if (can_frame.data[0] == 0)
 		{
 			Outputs::outObj.SetOff(1);
@@ -289,21 +241,14 @@ namespace CANLib
 		{
 			Outputs::outObj.SetOn(1);
 		}
+		obj_custom_beam.SetValue(0, on_off_validator(can_frame.data[0]), CAN_TIMER_TYPE_NONE, CAN_EVENT_TYPE_NORMAL);
 
-		can_frame.initialized = true;
-		can_frame.function_id = CAN_FUNC_EVENT_OK;
-		// can_frame.data[0] doesn't change
-		can_frame.raw_data_length = 2;
-
-		return CAN_RESULT_CAN_FRAME;
+		return CAN_RESULT_IGNORE;
 	}
 
 	// вызывается, если по CAN пришла команда включения/выключения пользовательского изображения на панели
 	can_result_t custom_image_set_handler(can_frame_t &can_frame, can_error_t &error)
 	{
-		// light_ecu_can_data.custom_image.brightness = can_frame.data[0];
-
-		// if (light_ecu_can_data.custom_image.brightness == 0)
 		if (can_frame.data[0] == 0)
 		{
 			Matrix::matrixObj.HideLayer(1);
@@ -315,13 +260,9 @@ namespace CANLib
 			Matrix::matrixObj.RegLayer(filename, 1);
 			Matrix::matrixObj.ShowLayer(1);
 		}
+		obj_custom_image.SetValue(0, on_off_validator(can_frame.data[0]), CAN_TIMER_TYPE_NONE, CAN_EVENT_TYPE_NORMAL);
 
-		can_frame.initialized = true;
-		can_frame.function_id = CAN_FUNC_EVENT_OK;
-		// can_frame.data[0] doesn't change
-		can_frame.raw_data_length = 2;
-
-		return CAN_RESULT_CAN_FRAME;
+		return CAN_RESULT_IGNORE;
 	}
 
 	inline void Setup()
