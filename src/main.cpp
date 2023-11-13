@@ -55,60 +55,61 @@ static void MX_USART1_UART_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_ADC1_Init(void);
 
-/// @brief Callback function of CAN receiver.
-/// @param hcan Pointer to the structure that contains CAN configuration.
+
+
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {
-    CAN_RxHeaderTypeDef RxHeader;
-    uint8_t RxData[8] = {0};
-
-    if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, RxData) == HAL_OK)
-    {
-        CANLib::can_manager.IncomingCANFrame(RxHeader.StdId, RxData, RxHeader.DLC);
-        //// LOG("RX: CAN 0x%04lX", RxHeader.StdId);
-    }
+	CAN_RxHeaderTypeDef RxHeader = {0};
+	uint8_t RxData[8] = {0};
+	
+	if( HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, RxData) == HAL_OK )
+	{
+		CANLib::can_manager.IncomingCANFrame(RxHeader.StdId, RxData, RxHeader.DLC);
+	}
+	
+	return;
 }
 
-/// @brief Callback function for CAN error handler
-/// @param hcan Pointer to the structure that contains CAN configuration.
 void HAL_CAN_ErrorCallback(CAN_HandleTypeDef *hcan)
 {
-    uint32_t er = HAL_CAN_GetError(hcan);
-	DEBUG_LOG("CAN ERROR: %lu %08lX", (unsigned long)er, (unsigned long)er);
+	Leds::obj.SetOn(Leds::LED_YELLOW, 100);
+	
+	DEBUG_LOG_TOPIC("CAN", "RX error event, code: 0x%08lX\n", HAL_CAN_GetError(hcan));
+	
+	return;
 }
 
-/// @brief Sends data via CAN bus
-/// @param id CANObject ID
-/// @param data Pointer to the CAN frame data buffer (8 bytes max)
-/// @param length Length of the CAN frame data buffer
 void HAL_CAN_Send(can_object_id_t id, uint8_t *data, uint8_t length)
 {
-    CAN_TxHeaderTypeDef TxHeader;
-    uint8_t TxData[8] = {0};
+	CAN_TxHeaderTypeDef TxHeader = {0};
+	uint8_t TxData[8] = {0};
     uint32_t TxMailbox = 0;
+	
+	TxHeader.StdId = id;
+	TxHeader.ExtId = 0;
+	TxHeader.RTR  = CAN_RTR_DATA;
+	TxHeader.IDE = CAN_ID_STD;
+	TxHeader.DLC = length;
+	TxHeader.TransmitGlobalTime = DISABLE;
+	memcpy(TxData, data, length);
+	
+	while( HAL_CAN_GetTxMailboxesFreeLevel(&hcan) == 0 )
+	{
+		Leds::obj.SetOn(Leds::LED_YELLOW);
+	}
+	Leds::obj.SetOff(Leds::LED_YELLOW);
+	
+	if( HAL_CAN_AddTxMessage(&hcan, &TxHeader, TxData, &TxMailbox) != HAL_OK )
+	{
+		Leds::obj.SetOn(Leds::LED_YELLOW, 100);
 
-    TxHeader.StdId = id;                   // Standard frame ID (sets to 0 if extended one used)
-    TxHeader.ExtId = 0;                    // Extended frame ID (sets to 0 if standard one used)
-    TxHeader.RTR = CAN_RTR_DATA;           // CAN_RTR_DATA: CAN frame with data will be sent
-                                           // CAN_RTR_REMOTE: remote CAN frame will be sent
-    TxHeader.IDE = CAN_ID_STD;             // CAN_ID_STD: CAN frame with standard ID
-                                           // CAN_ID_EXT: CAN frame with extended ID
-    TxHeader.DLC = length;                 // Data length of the CAN frame
-    TxHeader.TransmitGlobalTime = DISABLE; // Time Triggered Communication Mode
-
-    memcpy(TxData, data, length);
-
-    while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan) == 0)
-    {
-        Leds::obj.SetOn(Leds::LED_YELLOW);
-    }
-    Leds::obj.SetOff(Leds::LED_YELLOW);
-
-    if (HAL_CAN_AddTxMessage(&hcan, &TxHeader, TxData, &TxMailbox) != HAL_OK)
-    {
-        //LOG("CAN TX ERROR: 0x%04lX", TxHeader.StdId);
-    }
+		DEBUG_LOG_TOPIC("CAN", "TX error event, code: 0x%08lX\n", HAL_CAN_GetError(&hcan));
+	}
+	
+	return;
 }
+
+
 
 /// @brief Flash card initialization
 void InitFlash()
@@ -116,10 +117,13 @@ void InitFlash()
     disk_initialize(SDFatFs.drv);
 
     // f_mount(&SDFatFs, "", 0);
-    if (f_mount(&SDFatFs, "", 1) != FR_OK)
-    {
-        Leds::obj.SetOn(Leds::LED_RED, 250, 250);
-    }
+	FRESULT mount_res = f_mount(&SDFatFs, "", 1);
+	if(mount_res != FR_OK)
+	{
+		Leds::obj.SetOn(Leds::LED_RED, 250, 250);
+		
+		Logger.PrintTopic("SD").Printf("Init error, code: %d", mount_res).PrintNewLine();
+	}
     /*
     else
     {
@@ -206,6 +210,8 @@ int main(void)
     CANLib::Setup();
     Matrix::Setup();
     Outputs::Setup();
+
+	Leds::obj.SetOn(Leds::LED_GREEN, 50, 1950);
 
     uint32_t current_time = HAL_GetTick();
     while (1)
@@ -588,10 +594,15 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
  */
 void Error_Handler(void)
 {
-    Leds::obj.SetOff(Leds::LED_GREEN);
-    while (1)
-    {
-    }
+	Leds::obj.SetOn(Leds::LED_RED);
+	Leds::obj.SetOff(Leds::LED_YELLOW);
+	Leds::obj.SetOff(Leds::LED_GREEN);
+	Leds::obj.SetOff(Leds::LED_BLUE);
+	
+	while (1)
+	{
+
+	}
 }
 
 #ifdef USE_FULL_ASSERT
