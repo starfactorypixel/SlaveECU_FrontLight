@@ -251,7 +251,9 @@ namespace CANLib
 	{
 		if (can_frame.data[0] == 0)
 		{
-			Matrix::matrixObj.HideLayer(1);
+			//Matrix::matrixObj.HideLayer(1);
+			Matrix::matrixObj.RegLayer("layer1.pxl", 1);
+			Matrix::matrixObj.ShowLayer(1);
 		}
 		else
 		{
@@ -267,9 +269,6 @@ namespace CANLib
 
 	inline void Setup()
 	{
-		// set CAN data structure to zero
-		// memset(&light_ecu_can_data, 0, sizeof(light_ecu_can_data));
-
 		obj_side_beam.RegisterFunctionSet(&side_beam_set_handler);
 		obj_low_beam.RegisterFunctionSet(&low_beam_set_handler);
 		obj_high_beam.RegisterFunctionSet(&high_beam_set_handler);
