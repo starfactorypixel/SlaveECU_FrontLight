@@ -10,11 +10,12 @@ namespace Matrix
 {
 
 	/* Настройки */
-	static constexpr uint8_t CFG_Layers = 8;	// Кол-во слоёв анимации.
-	static constexpr uint8_t CFG_Width = 128;	// Ширина экрана.
-	static constexpr uint8_t CFG_Height = 16;	// Высота экрана.
-	static constexpr uint16_t CFG_Delay = 200;	// Интервал обновления экрана.
-	#define ROOT_DIRECTORY ("/pxl_f")			// Папка с файлами pxl.
+	static constexpr uint8_t CFG_Layers = 8;		// Кол-во слоёв анимации.
+	static constexpr uint8_t CFG_Width = 128;		// Ширина экрана.
+	static constexpr uint8_t CFG_Height = 16;		// Высота экрана.
+	static constexpr uint16_t CFG_Delay = 200;		// Интервал обновления экрана.
+	static constexpr uint8_t CFG_Brightness = 10;	// Яркость матрицы.
+	#define ROOT_DIRECTORY ("/pxl_f")				// Папка с файлами pxl.
 	/* */
 	
 	MatrixLed<CFG_Layers, CFG_Width, CFG_Height> matrixObj(CFG_Delay);
@@ -92,8 +93,8 @@ void DMAInit()
     PWM_LO = (uint8_t) (APBfq * 0.20) - 1;     // Log.0 - 20% - 0.25us/0.5us
 #endif
 #ifdef WS2812
-    PWM_HI = (uint8_t) (APBfq * 0.56) - 1;     // Log.1 - 56% - 0.70us
-    PWM_LO = (uint8_t) (APBfq * 0.28) - 1;     // Log.0 - 28% - 0.35us
+    PWM_HI = (uint8_t) (APBfq * 0.65) - 1;     // Log.1 - 56% - 0.70us
+    PWM_LO = (uint8_t) (APBfq * 0.34) - 1;     // Log.0 - 28% - 0.35us
 #endif
 #ifdef SK6812
     PWM_HI = (uint8_t) (APBfq * 0.48) - 1;     // Log.1 - 48% - 0.60us
@@ -341,7 +342,7 @@ inline void Setup()
 	//matrixObj.ShowLayer(6);
 	//matrixObj.ShowLayer(7);
 	
-	matrixObj.SetBrightness(10);
+	matrixObj.SetBrightness(CFG_Brightness);
 	
 	matrixObj.GetFrameBuffer(frame_buffer_ptr, frame_buffer_len);
 
