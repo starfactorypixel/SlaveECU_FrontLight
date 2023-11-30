@@ -158,7 +158,7 @@ uint8_t SPI_wait_ready(uint8_t neq, uint8_t *result)
 uint8_t SD_cmd(uint8_t cmd, uint32_t arg)
 {
 	uint8_t result;
-	uint16_t cnt = 0;
+	uint8_t cnt = 0;
 	uint8_t rxtxbuff[6];
 	
 	// ACMD<n> is the command sequense of CMD55-CMD<n>
@@ -183,8 +183,8 @@ uint8_t SD_cmd(uint8_t cmd, uint32_t arg)
 	rxtxbuff[5] = cnt;
 	HAL_SPI_WriteFast(rxtxbuff, 6, 1000);
 	
-	// Receive a command response
-	cnt = 100;
+	// Ждём ответ R1, в котором старший бит всегда 0. На шине до этого 0xFF
+	cnt = 10;
 	do {
 		HAL_SPI_ReadFast(rxtxbuff, 1, 100);
 	} while ( (rxtxbuff[0] & 0x80) && --cnt);
@@ -204,29 +204,33 @@ void SD_PowerOn(void)
 
 // http://chlazza.nfshost.com/sdcardinfo.html
 // https://www.st.com/resource/en/application_note/an5595-spc58xexspc58xgx-multimedia-card-via-spi-interface-stmicroelectronics.pdf
+// http://www.edproject.co.uk/18Series14.html
 
 uint8_t SD_Read_Block(uint8_t *buff, uint32_t lba)
 {
 	static const uint16_t block_size = 512U;
-	
 	uint8_t result;
-	uint8_t rxtxbuff[2] = {0xFF, 0xFF};
+	uint8_t rxtxbuff[2];
 	
-	// Отправляем команду CMD18 (READ_MULTIPLE_BLOCK)
-	result = SD_cmd(CMD18, lba);
+	// Отправляем команду CMD17 (READ_SINGLE_BLOCK)
+	result = SD_cmd(CMD17, lba);
 	if(result != 0x00) return 5;
-	HAL_SPI_WriteFast(rxtxbuff, 1, 100); // Но по факту Read, но я не понимаю зачем это тут.
 	
-	// Ждём подтвержение
+	// Непонимаю зачем это тут, но это уменьшает время ожидания данных на ~1мс.
+	HAL_SPI_ReadFast(rxtxbuff, 1, 100);
+	
+	// Ждём токен начала данных
 	if( SPI_wait_ready(0xFE, &result) == 0 ) return 5;
-	
-	// Читаем 512 байт и отправляем CMD12 (STOP_TRANSMISSION)
+
+	// Читаем 512 байт
 	HAL_SPI_ReadFast(buff, block_size, 1000);
-	SD_cmd(CMD12, 0x00000000);
-	
-	// Игнорируем контрольную сумму?
-	HAL_SPI_WriteFast(rxtxbuff, 2, 100); // Но по факту Read, но я не понимаю зачем это тут.
-	
+
+	// Читаем 2 байта CRC
+	HAL_SPI_ReadFast(rxtxbuff, 2, 100);
+
+	// Если используем CMD18 (READ_MULTIPLE_BLOCK), то останавливаем передачу.
+	//SD_cmd(CMD12, 0x00000000);
+
 	return 0;
 }
 
