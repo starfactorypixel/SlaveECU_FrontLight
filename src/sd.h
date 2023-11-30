@@ -5,6 +5,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
+
+#warning It doesn't work if '-O2'. Fast fix..
+#pragma GCC optimize("-Ofast")
+
 //--------------------------------------------------
 #define CS_SD_GPIO_PORT GPIOA
 #define CS_SD_PIN GPIO_PIN_8
@@ -27,6 +31,6 @@ uint8_t sd_ini(void);
 void SPI_Release(void);
 uint8_t SD_Read_Block (uint8_t *buff, uint32_t lba);
 uint8_t SD_Write_Block (uint8_t *buff, uint32_t lba);
-uint8_t SPI_wait_ready(void);
+uint8_t SPI_wait_ready(uint8_t neq, uint8_t *result);
 //--------------------------------------------------
 #endif /* SD_H_ */

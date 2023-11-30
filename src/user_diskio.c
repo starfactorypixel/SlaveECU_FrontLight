@@ -208,7 +208,8 @@ DRESULT USER_ioctl (
 		{
 			case CTRL_SYNC : /* Flush dirty buffer if present */
 				SS_SD_SELECT();
-				if (SPI_wait_ready() == 0xFF)
+				uint8_t tmp;
+				if (SPI_wait_ready(0xFF, &tmp) == 1)
 				res = RES_OK;
 				break;
 			case GET_SECTOR_SIZE : /* Get sectors on the disk (WORD) */

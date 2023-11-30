@@ -361,7 +361,7 @@ inline void Setup()
 	return;
 }
 
-uint32_t timer1, timer2, timer3, timer4;
+uint32_t timer1, timer2, timer3, timer12, timer23;
 
 inline void Loop(uint32_t &current_time)
 {
@@ -371,12 +371,12 @@ inline void Loop(uint32_t &current_time)
 	
 	if(matrixObj.IsBufferReady() == true)
 	{
+		timer12 = timer2 - timer1;
+		timer23 = HAL_GetTick();
+		
 		matrixObj.SetFrameDrawStart();
 		
 		DMADraw();
-
-		//Serial::Printf("+INFO\tRenderTime: %d ms;\r\n", (timer2 - timer1));
-		Logger.PrintTopic("INFO").Printf("RenderTime: %d ms;", (timer2 - timer1)).PrintNewLine();
 		
 		//Serial::Print("+PXL=128,16,2\r\n");
 		//Serial::Print(frame_buffer_ptr, frame_buffer_len);
@@ -385,6 +385,10 @@ inline void Loop(uint32_t &current_time)
 	if( matrixObj.GetFrameIsDraw() == true && frame_buffer_idx == 0 )
 	{
 		matrixObj.SetFrameDrawEnd();
+		
+		timer23 = HAL_GetTick() - timer23;
+		//DEBUG_LOG_TOPIC("PXLTime", "render: %d ms, draw: %d ms, total: %d ms\n", timer12, timer23, (timer23 + timer12));
+		Logger.PrintTopic("PXLTime").Printf("render: %d ms, draw: %d ms, total: %d ms;\n", timer12, timer23, (timer23 + timer12));
 	}
 	
 	current_time = HAL_GetTick();
